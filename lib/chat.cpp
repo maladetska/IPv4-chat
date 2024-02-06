@@ -6,6 +6,7 @@
 
 namespace chat {
     Chat::Chat(in_addr_t host, in_port_t port) : SocketWorker(host, port) {
+        SetMaxBufferSizeIn(c_MaxNicknameSize + c_MaxTextSize + c_AdditionalChars.length());
         ChatPrinter::Greeting();
     }
 
@@ -27,25 +28,25 @@ namespace chat {
         do {
             ChatPrinter::EnteringNickname(nickname_);
         } while (!isValidNickname());
-
+        SetMaxBufferSizeOut(nickname_.length() + c_AdditionalChars.length() + c_MaxTextSize);
         ChatPrinter::InitMessageInput();
     }
 
     void Chat::WriteMessages() {
         while (!must_stop_) {
-            RefreshTextBuffer(text_buffer_out_);
+            RefreshTextBufferOut();
             std::string message;
             do {
                 message = ChatPrinter::GetPrintedMessage();
             } while (!isValidMessageText(message));
             IsStopWordPrinted(message);
-            SendMessage(nickname_ + ": " + GetValidSizeMessageText(message));
+            SendMessage(nickname_ + c_AdditionalChars + GetValidSizeMessageText(message));
         }
     }
 
     void Chat::ListenMessages() {
         do {
-            RefreshTextBuffer(text_buffer_in_);
+            RefreshTextBufferIn();
             ReceiveMessage();
             ChatPrinter::PrintMessage(GetReceivedHost(), text_buffer_in_);
         } while (!must_stop_);
@@ -66,13 +67,9 @@ namespace chat {
         Sendto();
     }
 
-    void Chat::RefreshTextBuffer(std::string &text_buffer) {
-        text_buffer.clear();
-        text_buffer.resize(c_MaxBufferSize);
-    }
-
-    bool Chat::isValidNickname() {
-        return std::none_of(nickname_.begin(), nickname_.end(), isspace);
+    bool Chat::isValidNickname() const {
+        return nickname_.length() < c_MaxNicknameSize &&
+               std::none_of(nickname_.begin(), nickname_.end(), isspace);
     }
 
     bool Chat::isValidMessageText(const std::string &text) {
@@ -82,9 +79,9 @@ namespace chat {
     }
 
     std::string Chat::GetValidSizeMessageText(const std::string &message) {
-        return message.size() > c_MaxBufferSize
-                       ? message
-                       : message.substr(0, c_MaxBufferSize);
+        return message.size() > c_MaxTextSize
+                       ? message.substr(0, c_MaxTextSize)
+                       : message;
     }
 
     bool Chat::IsStopWordPrinted(const std::string &text) {

@@ -6,7 +6,7 @@ namespace chat {
     }
 
     void ChatPrinter::EnteringNickname(std::string& nickname) {
-        std::cout << "Enter your nickname:" << std::endl;
+        std::cout << "Enter your nickname (up to 20 characters, without spaces):" << std::endl;
         std::getline(std::cin, nickname);
     }
 

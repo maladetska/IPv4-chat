@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>
+
 #include "socket_worker.hpp"
 
 namespace chat {
@@ -21,17 +23,20 @@ namespace chat {
         void ReceiveMessage();
         void SendMessage(const std::string &);
 
-        static void RefreshTextBuffer(std::string &);
-
-        [[nodiscard]] bool isValidNickname();
+        [[nodiscard]] bool isValidNickname() const;
         [[nodiscard]] static bool isValidMessageText(const std::string &);
         [[nodiscard]] static std::string GetValidSizeMessageText(const std::string &);
         bool IsStopWordPrinted(const std::string &);
 
         std::string nickname_{};
 
-        bool must_stop_ = false;
+        std::atomic<bool> must_stop_ = false;
 
-        const char *c_StopSign = "STOP";
+        static const size_t c_MaxTextSize = 1007;
+        static const size_t c_MaxNicknameSize = 20;
+
+        const std::string c_AdditionalChars = ": ";
+
+        const char *c_StopSign = "/STOP_CHAT";
     };
 } // namespace chat

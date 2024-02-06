@@ -11,16 +11,17 @@ int main(int argc, char *argv[]) {
     chat::Chat chat(
             inet_addr(argv[1]),
             std::strtol(argv[2], nullptr, 10));
+
     chat.SetNickname();
 
-    pthread_t thread1;
-    pthread_t thread2;
+    pthread_t listening_thread;
+    pthread_t writing_thread;
 
-    pthread_create(&thread2, nullptr, chat::Chat::StartWritingMessages, &chat);
-    pthread_create(&thread1, nullptr, chat::Chat::StartListeningMessages, &chat);
+    pthread_create(&writing_thread, nullptr, chat::Chat::StartWritingMessages, &chat);
+    pthread_create(&listening_thread, nullptr, chat::Chat::StartListeningMessages, &chat);
 
-    pthread_join(thread1, nullptr);
-    pthread_join(thread2, nullptr);
+    pthread_join(listening_thread, nullptr);
+    pthread_join(writing_thread, nullptr);
 
     return EXIT_SUCCESS;
 }
