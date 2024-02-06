@@ -22,19 +22,22 @@ namespace chat {
         void ReceiveMessage();
         void SendMessage(const std::string &);
 
+        [[nodiscard]] std::string ConstructTextToBuffer(const std::string &) const;
+
         [[nodiscard]] bool isValidNickname() const;
         [[nodiscard]] static bool isValidMessageText(const std::string &);
         [[nodiscard]] static std::string GetValidSizeMessageText(const std::string &);
         bool IsStopWordPrinted(const std::string &);
 
-        std::atomic<bool> must_stop_ = false;
-
         std::string nickname_{};
+        std::string ip_address_view_{};
+
+        std::atomic<bool> must_stop_ = false;
 
         static const size_t kMaxTextSize = 1007;
         static const size_t kMaxNicknameSize = 20;
 
-        const std::string kAdditionalChars = ": ";
+        const size_t kAdditionalCharsSize = 5;
 
         const char *kStopSign = "/STOP_CHAT";
     };

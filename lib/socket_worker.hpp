@@ -18,7 +18,7 @@ namespace chat {
     class SocketWorker {
     public:
         SocketWorker() = default;
-        explicit SocketWorker([[maybe_unused]] in_addr_t, in_port_t);
+        explicit SocketWorker(in_port_t);
 
         [[nodiscard]] static int Socket();
         void Setsockopt();
@@ -26,8 +26,6 @@ namespace chat {
 
         void Sendto();
         void Recvfrom();
-
-        [[nodiscard]] std::string GetReceivedHost() const;
 
         void CloseSocket() const;
 

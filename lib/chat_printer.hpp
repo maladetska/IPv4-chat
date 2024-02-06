@@ -8,7 +8,7 @@ namespace chat {
         static void Greeting();
         static void EnteringNickname(std::string &);
         static void InitMessageInput();
-        static void PrintMessage(const std::string &, const std::string &);
+        static void PrintReceivedMessage(const std::string &);
         [[nodiscard]] static std::string GetPrintedMessage();
         static void Farewell();
     };

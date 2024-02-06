@@ -1,12 +1,18 @@
 #include "chat.hpp"
 
-#include <algorithm>
-
 #include "chat_printer.hpp"
 
 namespace chat {
-    Chat::Chat(in_addr_t host, in_port_t port) : SocketWorker(host, port) {
-        text_buffer_in_.SetMaxSize(kMaxNicknameSize + kMaxTextSize + kAdditionalChars.length());
+    Chat::Chat(in_addr_t addr, in_port_t port) : SocketWorker(port) {
+        char hhh[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(addr), hhh, INET_ADDRSTRLEN);
+        ip_address_view_ = hhh;
+
+        text_buffer_in_.SetMaxSize(ip_address_view_.length() +
+                                   kMaxNicknameSize +
+                                   kMaxTextSize +
+                                   kAdditionalCharsSize);
+
         ChatPrinter::Greeting();
     }
 
@@ -32,7 +38,10 @@ namespace chat {
         do {
             ChatPrinter::EnteringNickname(nickname_);
         } while (!isValidNickname());
-        text_buffer_out_.SetMaxSize(nickname_.length() + kAdditionalChars.length() + kMaxTextSize);
+        text_buffer_out_.SetMaxSize(ip_address_view_.length() +
+                                    nickname_.length() +
+                                    kMaxTextSize +
+                                    kAdditionalCharsSize);
         ChatPrinter::InitMessageInput();
     }
 
@@ -44,7 +53,7 @@ namespace chat {
                 message = ChatPrinter::GetPrintedMessage();
             } while (!isValidMessageText(message));
             IsStopWordPrinted(message);
-            SendMessage(nickname_ + kAdditionalChars + GetValidSizeMessageText(message));
+            SendMessage(ConstructTextToBuffer(message));
         }
     }
 
@@ -52,7 +61,7 @@ namespace chat {
         do {
             text_buffer_in_.Refresh();
             ReceiveMessage();
-            ChatPrinter::PrintMessage(GetReceivedHost(), text_buffer_in_.GetText());
+            ChatPrinter::PrintReceivedMessage(text_buffer_in_.GetText());
         } while (!must_stop_);
         CloseSocket();
     }
@@ -64,6 +73,10 @@ namespace chat {
     void Chat::SendMessage(const std::string &full_text) {
         text_buffer_out_.SetText(full_text);
         Sendto();
+    }
+
+    std::string Chat::ConstructTextToBuffer(const std::string &message) const {
+        return "<" + ip_address_view_ + "> " + nickname_ + ": " + GetValidSizeMessageText(message);
     }
 
     bool Chat::isValidNickname() const {

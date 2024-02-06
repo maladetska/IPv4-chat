@@ -1,8 +1,7 @@
 #include "socket_worker.hpp"
 
 namespace chat {
-    SocketWorker::SocketWorker([[maybe_unused]] in_addr_t host, in_port_t port)
-        : sockfd_(Socket()) {
+    SocketWorker::SocketWorker(in_port_t port) : sockfd_(Socket()) {
         Setsockopt();
         FillAddressInfo(broadcast_addr_, INADDR_BROADCAST, port);
         FillAddressInfo(addr_out_, INADDR_ANY, port);
@@ -33,15 +32,11 @@ namespace chat {
     }
 
     void SocketWorker::Recvfrom() {
-        socklen_t sockaddr_len = sizeof(sockaddr);
+        socklen_t sockaddr_len = sizeof(addr_in_);
         CheckError("Recvfrom failed",
                    static_cast<int>(recvfrom(
                            sockfd_, text_buffer_in_.GetText().data(), text_buffer_in_.GetMaxSize(),
-                           MSG_WAITALL, reinterpret_cast<sockaddr *>(&addr_in_), &sockaddr_len)));
-    }
-
-    std::string SocketWorker::GetReceivedHost() const {
-        return inet_ntoa(addr_in_.sin_addr);
+                           0, reinterpret_cast<sockaddr *>(&addr_in_), &sockaddr_len)));
     }
 
     void SocketWorker::CloseSocket() const {

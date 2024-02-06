@@ -15,8 +15,8 @@ namespace chat {
                   << "(When you want to disconnect, write '/STOP_CHAT')" << std::endl;
     }
 
-    void ChatPrinter::PrintMessage(const std::string& host, const std::string& text) {
-        std::cout << "<" << host << "> " << text.c_str() << std::endl;
+    void ChatPrinter::PrintReceivedMessage(const std::string& text) {
+        std::cout << text.c_str() << std::endl;
     }
 
     std::string ChatPrinter::GetPrintedMessage() {
