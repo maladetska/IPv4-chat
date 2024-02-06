@@ -6,7 +6,7 @@
 
 namespace chat {
     Chat::Chat(in_addr_t host, in_port_t port) : SocketWorker(host, port) {
-        SetMaxBufferSizeIn(c_MaxNicknameSize + c_MaxTextSize + c_AdditionalChars.length());
+        text_buffer_in_.SetMaxSize(c_MaxNicknameSize + c_MaxTextSize + c_AdditionalChars.length());
         ChatPrinter::Greeting();
     }
 
@@ -28,13 +28,13 @@ namespace chat {
         do {
             ChatPrinter::EnteringNickname(nickname_);
         } while (!isValidNickname());
-        SetMaxBufferSizeOut(nickname_.length() + c_AdditionalChars.length() + c_MaxTextSize);
+        text_buffer_out_.SetMaxSize(nickname_.length() + c_AdditionalChars.length() + c_MaxTextSize);
         ChatPrinter::InitMessageInput();
     }
 
     void Chat::WriteMessages() {
         while (!must_stop_) {
-            RefreshTextBufferOut();
+            text_buffer_out_.Refresh();
             std::string message;
             do {
                 message = ChatPrinter::GetPrintedMessage();
@@ -46,9 +46,9 @@ namespace chat {
 
     void Chat::ListenMessages() {
         do {
-            RefreshTextBufferIn();
+            text_buffer_in_.Refresh();
             ReceiveMessage();
-            ChatPrinter::PrintMessage(GetReceivedHost(), text_buffer_in_);
+            ChatPrinter::PrintMessage(GetReceivedHost(), text_buffer_in_.GetText());
         } while (!must_stop_);
         CloseSocket();
     }
@@ -62,8 +62,7 @@ namespace chat {
     }
 
     void Chat::SendMessage(const std::string &full_text) {
-        text_buffer_out_.clear();
-        text_buffer_out_ = full_text;
+        text_buffer_out_.SetText(full_text);
         Sendto();
     }
 

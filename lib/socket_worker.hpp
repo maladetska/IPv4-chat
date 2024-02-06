@@ -32,14 +32,25 @@ namespace chat {
         void CloseSocket() const;
 
     protected:
-        void SetMaxBufferSizeIn(size_t);
-        void SetMaxBufferSizeOut(size_t);
+        class TextBuffer {
+        public:
+            TextBuffer() = default;
 
-        void RefreshTextBufferIn();
-        void RefreshTextBufferOut();
+            [[nodiscard]] std::string &GetText();
+            [[nodiscard]] size_t GetMaxSize() const;
 
-        std::string text_buffer_in_{};
-        std::string text_buffer_out_{};
+            void SetText(const std::string &);
+            void SetMaxSize(size_t);
+
+            void Refresh();
+
+        private:
+            std::string text_{};
+            size_t max_size_{};
+        };
+
+        TextBuffer text_buffer_in_{};
+        TextBuffer text_buffer_out_{};
 
     private:
         using Descriptor = int;
@@ -48,9 +59,6 @@ namespace chat {
         static void FillAddressInfo(sockaddr_in &, in_addr_t, in_port_t);
 
         int sockfd_{};
-
-        size_t max_text_buffer_size_in_{};
-        size_t max_text_buffer_size_out_{};
 
         sockaddr_in addr_in_{};
         sockaddr_in addr_out_{};

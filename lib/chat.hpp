@@ -28,9 +28,9 @@ namespace chat {
         [[nodiscard]] static std::string GetValidSizeMessageText(const std::string &);
         bool IsStopWordPrinted(const std::string &);
 
-        std::string nickname_{};
-
         std::atomic<bool> must_stop_ = false;
+
+        std::string nickname_{};
 
         static const size_t c_MaxTextSize = 1007;
         static const size_t c_MaxNicknameSize = 20;

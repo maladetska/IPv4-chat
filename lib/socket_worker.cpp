@@ -27,7 +27,7 @@ namespace chat {
         socklen_t sockaddr_len = sizeof(broadcast_addr_);
         CheckError("Sendto failed",
                    static_cast<int>(sendto(
-                           sockfd_, text_buffer_out_.c_str(), text_buffer_out_.size(),
+                           sockfd_, text_buffer_out_.GetText().c_str(), text_buffer_out_.GetText().size(),
                            0, reinterpret_cast<const sockaddr *>(&broadcast_addr_), sockaddr_len)));
     }
 
@@ -35,7 +35,7 @@ namespace chat {
         socklen_t sockaddr_len = sizeof(sockaddr);
         CheckError("Recvfrom failed",
                    static_cast<int>(recvfrom(
-                           sockfd_, text_buffer_in_.data(), max_text_buffer_size_in_,
+                           sockfd_, text_buffer_in_.GetText().data(), text_buffer_in_.GetMaxSize(),
                            MSG_WAITALL, reinterpret_cast<sockaddr *>(&addr_in_), &sockaddr_len)));
     }
 
@@ -45,24 +45,6 @@ namespace chat {
 
     void SocketWorker::CloseSocket() const {
         close(sockfd_);
-    }
-
-    void SocketWorker::SetMaxBufferSizeIn(size_t buffer_size) {
-        max_text_buffer_size_in_ = buffer_size;
-    }
-
-    void SocketWorker::SetMaxBufferSizeOut(size_t buffer_size) {
-        max_text_buffer_size_out_ = buffer_size;
-    }
-
-    void SocketWorker::RefreshTextBufferIn() {
-        text_buffer_in_.clear();
-        text_buffer_in_.resize(max_text_buffer_size_in_);
-    }
-
-    void SocketWorker::RefreshTextBufferOut() {
-        text_buffer_out_.clear();
-        text_buffer_out_.resize(max_text_buffer_size_out_);
     }
 
     int SocketWorker::CheckError(const std::string &str, Descriptor descriptor) {
@@ -79,5 +61,28 @@ namespace chat {
         addr.sin_family = AF_INET;
         addr.sin_addr.s_addr = htonl(host);
         addr.sin_port = htons(port);
+    }
+
+    void SocketWorker::TextBuffer::SetMaxSize(size_t new_size) {
+        std::cout << "max_size_: " << new_size << std::endl;
+        max_size_ = new_size;
+    }
+
+    void SocketWorker::TextBuffer::Refresh() {
+        text_.clear();
+        text_.resize(max_size_);
+    }
+
+    std::string &SocketWorker::TextBuffer::GetText() {
+        return text_;
+    }
+
+    size_t SocketWorker::TextBuffer::GetMaxSize() const {
+        return max_size_;
+    }
+
+    void SocketWorker::TextBuffer::SetText(const std::string &new_text) {
+        text_.clear();
+        text_ = new_text;
     }
 } // namespace chat
