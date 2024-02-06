@@ -9,6 +9,7 @@ namespace chat {
     public:
         Chat() = default;
         explicit Chat(in_addr_t, in_port_t);
+        ~Chat();
 
         static void *StartWritingMessages(void *);
         static void *StartListeningMessages(void *);
@@ -16,8 +17,6 @@ namespace chat {
         void SetNickname();
         void WriteMessages();
         void ListenMessages();
-
-        ~Chat();
 
     private:
         void ReceiveMessage();
@@ -32,11 +31,11 @@ namespace chat {
 
         std::string nickname_{};
 
-        static const size_t c_MaxTextSize = 1007;
-        static const size_t c_MaxNicknameSize = 20;
+        static const size_t kMaxTextSize = 1007;
+        static const size_t kMaxNicknameSize = 20;
 
-        const std::string c_AdditionalChars = ": ";
+        const std::string kAdditionalChars = ": ";
 
-        const char *c_StopSign = "/STOP_CHAT";
+        const char *kStopSign = "/STOP_CHAT";
     };
 } // namespace chat

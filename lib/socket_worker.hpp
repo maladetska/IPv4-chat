@@ -64,6 +64,6 @@ namespace chat {
         sockaddr_in addr_out_{};
         sockaddr_in broadcast_addr_{};
 
-        const int c_Broadcast = 1;
+        const int kBroadcast = 1;
     };
 } // namespace chat

@@ -1,12 +1,11 @@
 #include "chat_printer.hpp"
 
 namespace chat {
-    void ChatPrinter::Greeting() {
-        std::cout << "Welcome to chat!" << std::endl;
-    }
+    void ChatPrinter::Greeting() { std::cout << "Welcome to chat!" << std::endl; }
 
     void ChatPrinter::EnteringNickname(std::string& nickname) {
-        std::cout << "Enter your nickname (up to 20 characters, without spaces):" << std::endl;
+        std::cout << "Enter your nickname (up to 20 characters, without spaces):"
+                  << std::endl;
         std::getline(std::cin, nickname);
     }
 
@@ -15,9 +14,9 @@ namespace chat {
                   << "(When you want to disconnect, write '/STOP_CHAT')" << std::endl;
     }
 
-    void ChatPrinter::PrintMessage(const std::string& host, const std::string& text) {
-        std::cout << "<" << host << "> "
-                  << text.c_str() << std::endl;
+    void ChatPrinter::PrintMessage(const std::string& host,
+                                   const std::string& text) {
+        std::cout << "<" << host << "> " << text.c_str() << std::endl;
     }
 
     std::string ChatPrinter::GetPrintedMessage() {
