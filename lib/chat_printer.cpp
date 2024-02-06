@@ -12,7 +12,7 @@ namespace chat {
 
     void ChatPrinter::InitMessageInput() {
         std::cout << "Enter your messages." << std::endl
-                  << "(When you want to disconnect, write 'STOP')" << std::endl;
+                  << "(When you want to disconnect, write '/STOP_CHAT')" << std::endl;
     }
 
     void ChatPrinter::PrintMessage(const std::string& host, const std::string& text) {

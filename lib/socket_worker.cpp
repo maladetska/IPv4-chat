@@ -64,7 +64,6 @@ namespace chat {
     }
 
     void SocketWorker::TextBuffer::SetMaxSize(size_t new_size) {
-        std::cout << "max_size_: " << new_size << std::endl;
         max_size_ = new_size;
     }
 
