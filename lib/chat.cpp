@@ -68,9 +68,9 @@ namespace chat {
     }
 
     std::string Chat::GetIpAddressStr(in_addr_t addr) const {
-        char hhh[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, &(addr), hhh, INET_ADDRSTRLEN);
-        return hhh;
+        char ip_addr[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(addr), ip_addr, INET_ADDRSTRLEN);
+        return ip_addr;
     }
 
     std::string Chat::ConstructTextToBuffer(const std::string &message) const {
