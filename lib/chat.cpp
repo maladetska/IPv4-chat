@@ -67,7 +67,7 @@ namespace chat {
         Sendto();
     }
 
-    std::string Chat::GetIpAddressStr(in_addr_t addr) const {
+    std::string Chat::GetIpAddressStr(in_addr_t addr) {
         char ip_addr[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &(addr), ip_addr, INET_ADDRSTRLEN);
         return ip_addr;

@@ -22,7 +22,7 @@ namespace chat {
         void ReceiveMessage();
         void SendMessage(const std::string &);
 
-        [[nodiscard]] std::string GetIpAddressStr(in_addr_t) const;
+        [[nodiscard]] static std::string GetIpAddressStr(in_addr_t);
         [[nodiscard]] std::string ConstructTextToBuffer(const std::string &) const;
 
         [[nodiscard]] bool isValidNickname() const;
