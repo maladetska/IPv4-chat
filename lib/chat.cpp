@@ -6,9 +6,12 @@
 
 namespace chat {
     Chat::Chat(in_addr_t host, in_port_t port) : SocketWorker(host, port) {
-        text_buffer_in_.SetMaxSize(kMaxNicknameSize + kMaxTextSize +
-                                   kAdditionalChars.length());
+        text_buffer_in_.SetMaxSize(kMaxNicknameSize + kMaxTextSize + kAdditionalChars.length());
         ChatPrinter::Greeting();
+    }
+
+    Chat::~Chat() {
+        ChatPrinter::Farewell();
     }
 
     void *Chat::StartWritingMessages(void *chat_ptr) {
@@ -29,8 +32,7 @@ namespace chat {
         do {
             ChatPrinter::EnteringNickname(nickname_);
         } while (!isValidNickname());
-        text_buffer_out_.SetMaxSize(nickname_.length() + kAdditionalChars.length() +
-                                    kMaxTextSize);
+        text_buffer_out_.SetMaxSize(nickname_.length() + kAdditionalChars.length() + kMaxTextSize);
         ChatPrinter::InitMessageInput();
     }
 
@@ -42,8 +44,7 @@ namespace chat {
                 message = ChatPrinter::GetPrintedMessage();
             } while (!isValidMessageText(message));
             IsStopWordPrinted(message);
-            SendMessage(nickname_ + kAdditionalChars +
-                        GetValidSizeMessageText(message));
+            SendMessage(nickname_ + kAdditionalChars + GetValidSizeMessageText(message));
         }
     }
 
@@ -56,9 +57,9 @@ namespace chat {
         CloseSocket();
     }
 
-    Chat::~Chat() { ChatPrinter::Farewell(); }
-
-    void Chat::ReceiveMessage() { Recvfrom(); }
+    void Chat::ReceiveMessage() {
+        Recvfrom();
+    }
 
     void Chat::SendMessage(const std::string &full_text) {
         text_buffer_out_.SetText(full_text);
@@ -71,13 +72,13 @@ namespace chat {
     }
 
     bool Chat::isValidMessageText(const std::string &text) {
-        return !std::all_of(text.begin(), text.end(),
-                            [](char c) { return std::isspace(c); });
+        return !std::all_of(text.begin(), text.end(), [](char c) { return std::isspace(c); });
     }
 
     std::string Chat::GetValidSizeMessageText(const std::string &message) {
-        return message.size() > kMaxTextSize ? message.substr(0, kMaxTextSize)
-                                             : message;
+        return message.size() > kMaxTextSize
+                       ? message.substr(0, kMaxTextSize)
+                       : message;
     }
 
     bool Chat::IsStopWordPrinted(const std::string &text) {
