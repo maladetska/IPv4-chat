@@ -4,15 +4,9 @@
 
 namespace chat {
     Chat::Chat(in_addr_t addr, in_port_t port) : SocketWorker(port) {
-        char hhh[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, &(addr), hhh, INET_ADDRSTRLEN);
-        ip_address_view_ = hhh;
-
-        text_buffer_in_.SetMaxSize(ip_address_view_.length() +
-                                   kMaxNicknameSize +
-                                   kMaxTextSize +
-                                   kAdditionalCharsSize);
-
+        ip_address_view_ = GetIpAddressStr(addr);
+        text_buffer_in_.SetMaxSize(ip_address_view_.length() + kMaxNicknameSize +
+                                   kMaxTextSize + kAdditionalCharsSize);
         ChatPrinter::Greeting();
     }
 
@@ -38,10 +32,8 @@ namespace chat {
         do {
             ChatPrinter::EnteringNickname(nickname_);
         } while (!isValidNickname());
-        text_buffer_out_.SetMaxSize(ip_address_view_.length() +
-                                    nickname_.length() +
-                                    kMaxTextSize +
-                                    kAdditionalCharsSize);
+        text_buffer_out_.SetMaxSize(ip_address_view_.length() + nickname_.length() +
+                                    kMaxTextSize + kAdditionalCharsSize);
         ChatPrinter::InitMessageInput();
     }
 
@@ -73,6 +65,12 @@ namespace chat {
     void Chat::SendMessage(const std::string &full_text) {
         text_buffer_out_.SetText(full_text);
         Sendto();
+    }
+
+    std::string Chat::GetIpAddressStr(in_addr_t addr) const {
+        char hhh[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(addr), hhh, INET_ADDRSTRLEN);
+        return hhh;
     }
 
     std::string Chat::ConstructTextToBuffer(const std::string &message) const {

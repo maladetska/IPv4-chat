@@ -4,15 +4,16 @@ set -e
 
 declare -x SUBNET=172.18.0.0/16
 declare -x HOST=172.18.0.22
+declare -x NETWORK=$2
 
 docker build . -t ipv4-udp-chat:latest
 
-if [ ! "$(docker network ls | grep chat_network)" ]; then
-  docker network create --subnet $SUBNET chat_network
+if [ ! "$(docker network ls | grep $NETWORK)" ]; then
+  docker network create --subnet $SUBNET $NETWORK
 fi
 
 docker run -it \
-  --network=chat_network \
+  --network=$NETWORK \
   --ip $HOST \
   ipv4-udp-chat:latest \
   bash -c "\$APP_PATH $HOST $1"

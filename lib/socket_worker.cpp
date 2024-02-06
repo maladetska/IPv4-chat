@@ -36,7 +36,7 @@ namespace chat {
         CheckError("Recvfrom failed",
                    static_cast<int>(recvfrom(
                            sockfd_, text_buffer_in_.GetText().data(), text_buffer_in_.GetMaxSize(),
-                           0, reinterpret_cast<sockaddr *>(&addr_in_), &sockaddr_len)));
+                           MSG_WAITALL, reinterpret_cast<sockaddr *>(&addr_in_), &sockaddr_len)));
     }
 
     void SocketWorker::CloseSocket() const {
